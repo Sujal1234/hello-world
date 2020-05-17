@@ -72,9 +72,9 @@ while (true) {
             if(turn===0){
                 myPacs.push(new Pac(x,y,pacId));
             }else{
-                var ind = myPacs.findIndex(element => element.id==pacId);
-                myPacs[i].x=x;
-                myPacs[i].y=y;
+                var pac = myPacs.find(element => element.id==pacId);
+                pac.x = x;
+                pac.y = y;
             }
         }
     }
