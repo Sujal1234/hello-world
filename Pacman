@@ -1,10 +1,43 @@
 /**
  * Grab the pellets as fast as you can!
  **/
+class Pellet{
+    constructor(x,y,value){
+        this.x = x;
+        this.y=y;
+        this.value=value;
+    }
+}
+class Pac{
+    constructor(x, y, id){
+        this.x = x;
+        this.y = y;
+        this.id = id;
+
+        this.targetX=x;
+        this.targetY=y;
+    }
+
+    findClosestPellet(pellets){
+        var nearest=Infinity;
+        for(var i=0;i < pellets.length;i++){
+            var pellet=pellets[i];
+            var d=dist(this.x, this.y, pellet.x, pellet.y);
+
+            if(d < nearest){
+                nearest=d;
+                this.targetX=pellet.x;
+                this.targetY=pellet.y;
+            }
+        }
+    }
+
+}
 
 function dist(x1, y1, x2, y2){
     return Math.abs(x1-x2) + Math.abs(y1-y2);
 }
+
 
 var inputs = readline().split(' ');
 const width = parseInt(inputs[0]); // size of the grid
@@ -12,19 +45,17 @@ const height = parseInt(inputs[1]); // top left corner is (x=0, y=0)
 for (let i = 0; i < height; i++) {
     const row = readline(); // one line of the grid: space " " is floor, pound "#" is wall
 }
-var myXs = [];
-var myYs = [];
-var pacIds=[];
+var myPacs=[];
+var Pellets=[];
 
 // game loop
+turn = 0;
 while (true) {
     var inputs = readline().split(' ');
     const myScore = parseInt(inputs[0]);
     const opponentScore = parseInt(inputs[1]);
     const visiblePacCount = parseInt(readline()); // all your pacs and enemy pacs in sight
     
-    var targetXs = new Array(myXs.length);
-    var targetYs = new Array(myXs.length);
 
     for (let i = 0; i < visiblePacCount; i++) {
         var inputs = readline().split(' ');
@@ -37,18 +68,16 @@ while (true) {
         const abilityCooldown = parseInt(inputs[6]); // unused in wood leagues
 
         if(mine){
-            myXs.push(x);
-            myYs.push(y);
-            pacIds.push(pacId);
+            if(turn===0){
+                myPacs.push(new Pac(x,y,pacId));
+            }else{
+                var ind = myPacs.findIndex(element => element.id==pacId);
+                myPacs[i].x=x;
+                myPacs[i].y=y;
+            }
         }
     }
     const visiblePelletCount = parseInt(readline()); // all pellets in sight
-
-    var nearestDists=new Array(myXs.length);
-
-    for(var i=0; i<nearestDists.length;i++){
-        nearestDists.push(Infinity);
-    }
 
     for (let i = 0; i < visiblePelletCount; i++) {
 
@@ -57,21 +86,21 @@ while (true) {
         const y = parseInt(inputs[1]);
         const value = parseInt(inputs[2]); // amount of points this pellet is worth
 
-        for(var i=0;i<myXs.length;i++){
-            var d = dist(myXs[i], myYs[i], x, y);
-
-            if(d < nearestDists[i]){
-                nearestDists[i] = d;
-                targetXs[i] = x;
-                targetYs[i] = y;
-            }
+        if(turn===0){
+            Pellets.push(new Pellet(x,y,value));
         }
     }
+
+    for(var pac of myPacs){
+        pac.findClosestPellet(Pellets);
+    }
+
 
     // Write an action using console.log()
     // To debug: console.error('Debug messages...');
  
-    for(var i=0;i < myXs.length;i++){
-        console.log('MOVE'+' '+pacIds[i]+' '+targetXs[i]+' '+targetYs[i]);
+    for(var pac of myPacs){
+        console.log('MOVE'+' '+pac.id+' '+pac.targetX+' '+pac.targetY);
     }
+    turn++;
 }
