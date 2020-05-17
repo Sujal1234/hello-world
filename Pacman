@@ -51,6 +51,7 @@ var Pellets=[];
 // game loop
 turn = 0;
 while (true) {
+    Pellets=[];
     var inputs = readline().split(' ');
     const myScore = parseInt(inputs[0]);
     const opponentScore = parseInt(inputs[1]);
@@ -86,9 +87,9 @@ while (true) {
         const y = parseInt(inputs[1]);
         const value = parseInt(inputs[2]); // amount of points this pellet is worth
 
-        if(turn===0){
-            Pellets.push(new Pellet(x,y,value));
-        }
+   
+        Pellets.push(new Pellet(x,y,value));
+
     }
 
     for(var pac of myPacs){
