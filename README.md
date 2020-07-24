@@ -1,2 +1,1 @@
-# hello-world
-First repository
+# pacman ai codingame
